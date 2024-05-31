@@ -24,3 +24,13 @@ type Product struct {
 	InsertedAt  pgtype.Timestamp
 	UpdatedAt   pgtype.Timestamp
 }
+
+type ProductVariant struct {
+	ID          int64
+	ProductID   int64
+	Sku         *string
+	Title       string
+	Description *string
+	InsertedAt  pgtype.Timestamp
+	UpdatedAt   pgtype.Timestamp
+}
