@@ -18,8 +18,8 @@ type GooseDbVersion struct {
 type Product struct {
 	ID          int64
 	Title       string
-	Sku         pgtype.Text
-	Slug        interface{}
+	Sku         *string
+	Slug        string
 	Description string
 	InsertedAt  pgtype.Timestamp
 	UpdatedAt   pgtype.Timestamp
