@@ -1,0 +1,23 @@
+.products {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, $product-grid-card-width);
+  gap: 1.5rem;
+  margin: 1.5rem;
+}
+
+.product {
+  width: 100%;
+  overflow: hidden;
+  text-align: center;
+}
+
+.product-image {
+  aspect-ratio: 1;
+  display: flex;
+
+  img {
+    object-fit: cover;
+    height: 100%;
+    width: 100%;
+  }
+}

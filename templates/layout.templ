@@ -1,11 +1,23 @@
 package templates
 
+templ fonts() {
+	<link rel="preconnect" href="https://fonts.googleapis.com"/>
+	<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
+	<link href="https://fonts.googleapis.com/css2?family=Inter:wght@100..900&display=swap" rel="stylesheet"/>
+}
+
+templ assets() {
+	<script type="module" src="http://localhost:5173/src/main.ts"></script>
+}
+
 templ RootLayout(title string) {
 	<!DOCTYPE html>
 	<html lang="en">
 		<head>
 			<meta charset="UTF-8"/>
-			<title></title>
+			<title>{ title }</title>
+			@fonts()
+			@assets()
 		</head>
 		<body>
 			{ children... }
