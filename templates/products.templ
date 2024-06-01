@@ -5,7 +5,12 @@ import "github.com/moroz/sqlc-demo/db/queries"
 templ ProductIndex(title string, products []queries.Product) {
 	@RootLayout(title) {
 		for _, product := range products {
-			<p>{ product.Title }</p>
+			<article class="product">
+				if product.Picture != nil && *product.Picture != "" {
+					<img src={ *product.Picture } class="product-image"/>
+				}
+				<p>{ product.Title }</p>
+			</article>
 		}
 	}
 }

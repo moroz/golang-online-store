@@ -10,7 +10,7 @@ import (
 )
 
 const listProductVariants = `-- name: ListProductVariants :many
-select pv.id, pv.product_id, pv.sku, pv.title, pv.description, pv.inserted_at, pv.updated_at, p.id, p.title, p.sku, p.slug, p.description, p.inserted_at, p.updated_at from product_variants pv
+select pv.id, pv.product_id, pv.sku, pv.title, pv.description, pv.inserted_at, pv.updated_at, p.id, p.title, p.sku, p.slug, p.description, p.inserted_at, p.updated_at, p.picture from product_variants pv
 join products p on pv.product_id = p.id
 order by pv.inserted_at desc
 `
@@ -44,6 +44,7 @@ func (q *Queries) ListProductVariants(ctx context.Context) ([]ListProductVariant
 			&i.Product.Description,
 			&i.Product.InsertedAt,
 			&i.Product.UpdatedAt,
+			&i.Product.Picture,
 		); err != nil {
 			return nil, err
 		}
@@ -56,7 +57,7 @@ func (q *Queries) ListProductVariants(ctx context.Context) ([]ListProductVariant
 }
 
 const listProducts = `-- name: ListProducts :many
-select id, title, sku, slug, description, inserted_at, updated_at from products order by inserted_at DESC
+select id, title, sku, slug, description, inserted_at, updated_at, picture from products order by inserted_at DESC
 `
 
 func (q *Queries) ListProducts(ctx context.Context) ([]Product, error) {
@@ -76,6 +77,7 @@ func (q *Queries) ListProducts(ctx context.Context) ([]Product, error) {
 			&i.Description,
 			&i.InsertedAt,
 			&i.UpdatedAt,
+			&i.Picture,
 		); err != nil {
 			return nil, err
 		}

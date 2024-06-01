@@ -23,6 +23,7 @@ type Product struct {
 	Description string
 	InsertedAt  pgtype.Timestamp
 	UpdatedAt   pgtype.Timestamp
+	Picture     *string
 }
 
 type ProductVariant struct {

@@ -100,6 +100,7 @@ CREATE TABLE public.products (
     description text NOT NULL,
     inserted_at timestamp(0) without time zone DEFAULT (now() AT TIME ZONE 'utc'::text) NOT NULL,
     updated_at timestamp(0) without time zone DEFAULT (now() AT TIME ZONE 'utc'::text) NOT NULL,
+    picture text,
     CONSTRAINT products_slug_check CHECK ((length((slug)::text) < 255))
 );
 

@@ -5,9 +5,8 @@ import (
 	"log"
 	"os"
 
-	"github.com/gin-gonic/gin"
 	"github.com/jackc/pgx/v5"
-	"github.com/moroz/sqlc-demo/controllers"
+	"github.com/moroz/sqlc-demo/handler"
 )
 
 func MustGetenv(key string) string {
@@ -22,17 +21,13 @@ var DatabaseUrl = MustGetenv("DATABASE_URL")
 
 func main() {
 	ctx := context.Background()
-	conn, err := pgx.Connect(ctx, DatabaseUrl)
-	defer conn.Close(ctx)
+	db, err := pgx.Connect(ctx, DatabaseUrl)
+	defer db.Close(ctx)
 
 	if err != nil {
 		log.Fatal(err)
 	}
 
-	r := gin.Default()
-
-	products := controllers.ProductController(conn)
-	r.GET("/", products.Index)
-
-	r.Run(":3000")
+	router := handler.Router(db)
+	router.Run(":3000")
 }
