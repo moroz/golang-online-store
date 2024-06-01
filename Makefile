@@ -4,6 +4,7 @@ guard-%:
 install:
 	which goose || go install github.com/pressly/goose/v3/cmd/goose@latest
 	which sqlc || go install github.com/sqlc-dev/sqlc/cmd/sqlc@latest
+	which templ || go install github.com/a-h/templ/cmd/templ@latest
 
 db.create: guard-PGDATABASE
 	createdb
@@ -25,3 +26,9 @@ db.schema.dump: guard-PGDATABASE
 
 sqlc.gen: db.schema.dump
 	sqlc generate -f db/sqlc.yml
+
+templ:
+	templ generate
+
+build:
+	go build -o server -tags="sonic avx nomsgpack" .

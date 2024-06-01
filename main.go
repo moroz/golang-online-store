@@ -2,12 +2,12 @@ package main
 
 import (
 	"context"
-	"fmt"
 	"log"
 	"os"
 
+	"github.com/gin-gonic/gin"
 	"github.com/jackc/pgx/v5"
-	"github.com/moroz/sqlc-demo/db/queries"
+	"github.com/moroz/sqlc-demo/controllers"
 )
 
 func MustGetenv(key string) string {
@@ -29,12 +29,10 @@ func main() {
 		log.Fatal(err)
 	}
 
-	queries := queries.New(conn)
+	r := gin.Default()
 
-	products, err := queries.ListProducts(ctx)
-	if err != nil {
-		log.Fatal(err)
-	}
+	products := controllers.ProductController(conn)
+	r.GET("/", products.Index)
 
-	fmt.Printf("%#v\n", products)
+	r.Run(":3000")
 }

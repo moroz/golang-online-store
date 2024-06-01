@@ -1,0 +1,11 @@
+package templates
+
+import "github.com/moroz/sqlc-demo/db/queries"
+
+templ ProductIndex(title string, products []queries.Product) {
+	@RootLayout(title) {
+		for _, product := range products {
+			<p>{ product.Title }</p>
+		}
+	}
+}
