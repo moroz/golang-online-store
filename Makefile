@@ -21,10 +21,7 @@ db.reset: guard-PGDATABASE
 db.seed: guard-DATABASE_URL
 	psql ${DATABASE_URL} -f db/seeds.sql
 
-db.schema.dump: guard-PGDATABASE
-	pg_dump -s -O -x --no-comments --no-publications ${PGDATABASE} -f db/schema.sql
-
-sqlc.gen: db.schema.dump
+sqlc.gen:
 	sqlc generate -f db/sqlc.yml
 
 templ:
