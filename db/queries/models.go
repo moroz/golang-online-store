@@ -10,21 +10,13 @@ import (
 
 type Product struct {
 	ID          int64
+	ParentID    *int64
 	Title       string
 	Sku         *string
 	Slug        string
 	Description string
-	InsertedAt  pgtype.Timestamp
-	UpdatedAt   pgtype.Timestamp
-	Picture     *string
-}
-
-type ProductVariant struct {
-	ID          int64
-	ProductID   int64
-	Sku         *string
-	Title       string
-	Description *string
+	BasePrice   pgtype.Numeric
+	MainPicture *string
 	InsertedAt  pgtype.Timestamp
 	UpdatedAt   pgtype.Timestamp
 }

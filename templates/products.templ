@@ -1,6 +1,16 @@
 package templates
 
+import "fmt"
 import "github.com/moroz/sqlc-demo/db/queries"
+import "github.com/jackc/pgx/v5/pgtype"
+
+func formatPrice(price pgtype.Numeric) string {
+	float, err := price.Float64Value()
+	if err != nil {
+		return ""
+	}
+	return fmt.Sprintf("NT$%d", int(float.Float64))
+}
 
 templ ProductIndex(title string, products []queries.Product) {
 	@RootLayout(title) {
@@ -8,11 +18,12 @@ templ ProductIndex(title string, products []queries.Product) {
 			for _, product := range products {
 				<article class="product">
 					<div class="product-image">
-						if product.Picture != nil && *product.Picture != "" {
-							<img src={ *product.Picture }/>
+						if product.MainPicture != nil && *product.MainPicture != "" {
+							<img src={ *product.MainPicture }/>
 						}
 					</div>
 					<p>{ product.Title }</p>
+					<span class="price">{ formatPrice(product.BasePrice) }</span>
 				</article>
 			}
 		</section>

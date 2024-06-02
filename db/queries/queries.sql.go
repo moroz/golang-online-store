@@ -10,41 +10,31 @@ import (
 )
 
 const listProductVariants = `-- name: ListProductVariants :many
-select pv.id, pv.product_id, pv.sku, pv.title, pv.description, pv.inserted_at, pv.updated_at, p.id, p.title, p.sku, p.slug, p.description, p.inserted_at, p.updated_at, p.picture from product_variants pv
-join products p on pv.product_id = p.id
-order by pv.inserted_at desc
+select id, parent_id, title, sku, slug, description, base_price, main_picture, inserted_at, updated_at from products
+where parent_id is not null
+order by parent_id, id
 `
 
-type ListProductVariantsRow struct {
-	ProductVariant ProductVariant
-	Product        Product
-}
-
-func (q *Queries) ListProductVariants(ctx context.Context) ([]ListProductVariantsRow, error) {
+func (q *Queries) ListProductVariants(ctx context.Context) ([]Product, error) {
 	rows, err := q.db.Query(ctx, listProductVariants)
 	if err != nil {
 		return nil, err
 	}
 	defer rows.Close()
-	var items []ListProductVariantsRow
+	var items []Product
 	for rows.Next() {
-		var i ListProductVariantsRow
+		var i Product
 		if err := rows.Scan(
-			&i.ProductVariant.ID,
-			&i.ProductVariant.ProductID,
-			&i.ProductVariant.Sku,
-			&i.ProductVariant.Title,
-			&i.ProductVariant.Description,
-			&i.ProductVariant.InsertedAt,
-			&i.ProductVariant.UpdatedAt,
-			&i.Product.ID,
-			&i.Product.Title,
-			&i.Product.Sku,
-			&i.Product.Slug,
-			&i.Product.Description,
-			&i.Product.InsertedAt,
-			&i.Product.UpdatedAt,
-			&i.Product.Picture,
+			&i.ID,
+			&i.ParentID,
+			&i.Title,
+			&i.Sku,
+			&i.Slug,
+			&i.Description,
+			&i.BasePrice,
+			&i.MainPicture,
+			&i.InsertedAt,
+			&i.UpdatedAt,
 		); err != nil {
 			return nil, err
 		}
@@ -57,7 +47,7 @@ func (q *Queries) ListProductVariants(ctx context.Context) ([]ListProductVariant
 }
 
 const listProducts = `-- name: ListProducts :many
-select id, title, sku, slug, description, inserted_at, updated_at, picture from products order by inserted_at DESC
+select id, parent_id, title, sku, slug, description, base_price, main_picture, inserted_at, updated_at from products order by inserted_at DESC
 `
 
 func (q *Queries) ListProducts(ctx context.Context) ([]Product, error) {
@@ -71,13 +61,15 @@ func (q *Queries) ListProducts(ctx context.Context) ([]Product, error) {
 		var i Product
 		if err := rows.Scan(
 			&i.ID,
+			&i.ParentID,
 			&i.Title,
 			&i.Sku,
 			&i.Slug,
 			&i.Description,
+			&i.BasePrice,
+			&i.MainPicture,
 			&i.InsertedAt,
 			&i.UpdatedAt,
-			&i.Picture,
 		); err != nil {
 			return nil, err
 		}
