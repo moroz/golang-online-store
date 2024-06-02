@@ -3,6 +3,7 @@
   grid-template-columns: repeat(auto-fill, $product-grid-card-width);
   gap: 1.5rem;
   margin: 1.5rem;
+  justify-content: center;
 }
 
 .product {
