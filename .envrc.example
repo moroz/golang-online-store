@@ -1,0 +1,6 @@
+export DATABASE_URL=postgres://postgres:postgres@localhost/store_dev?sslmode=disable
+export PGDATABASE=store_dev
+export GOOSE_DRIVER=postgres
+export GOOSE_DBSTRING="$DATABASE_URL"
+export GOOSE_MIGRATION_DIR=db/migrations
+export SESSION_SIGNER_BASE64="HrI0IGjrV8iqYDcNzocvTl0Lr5KDs5PM4VNdCmMyjac="

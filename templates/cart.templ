@@ -4,17 +4,20 @@ import "fmt"
 import "github.com/moroz/sqlc-demo/db/queries"
 
 templ ShowCart(items []queries.GetCartItemsByCartIdRow) {
-	<h1>Cart</h1>
-	<ul>
-		for _, item := range items {
-			<li>
-				{ item.Title } { formatPrice(item.BasePrice) } &times; { formatDecimal(item.Quantity) } = { formatPrice(item.Subtotal) }
-				<button type="button">Remove</button>
-			</li>
-		}
-	</ul>
-	<p>
-		<strong>Grand total:</strong>
-		{ fmt.Sprintf("NT$%d", int(calculateGrandTotal(items))) }
-	</p>
+	@RootLayout("Cart") {
+		<h1>Cart</h1>
+		<ul>
+			for _, item := range items {
+				<li>
+					{ item.Title } { formatPrice(item.BasePrice) } &times; { formatDecimal(item.Quantity) } = { formatPrice(item.Subtotal) }
+					<button type="button">Remove</button>
+				</li>
+			}
+		</ul>
+		<p>
+			<strong>Grand total:</strong>
+			{ fmt.Sprintf("NT$%d", int(calculateGrandTotal(items))) }
+		</p>
+		<a href="/">Continue shopping</a>
+	}
 }

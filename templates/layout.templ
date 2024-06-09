@@ -20,6 +20,12 @@ templ RootLayout(title string) {
 			@assets()
 		</head>
 		<body>
+      <header>
+        <h1>Online store</h1>
+        <nav>
+          <a href="/cart">Cart</a>
+        </nav>
+      </header>
 			{ children... }
 		</body>
 	</html>
