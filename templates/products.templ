@@ -1,16 +1,6 @@
 package templates
 
-import "fmt"
 import "github.com/moroz/sqlc-demo/db/queries"
-import "github.com/jackc/pgx/v5/pgtype"
-
-func formatPrice(price pgtype.Numeric) string {
-	float, err := price.Float64Value()
-	if err != nil {
-		return ""
-	}
-	return fmt.Sprintf("NT$%d", int(float.Float64))
-}
 
 templ ProductIndex(title string, products []queries.Product) {
 	@RootLayout(title) {

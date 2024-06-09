@@ -11,12 +11,15 @@ db.create: guard-PGDATABASE
 
 db.migrate: guard-GOOSE_DBSTRING
 	goose up
-	make db.schema.dump
+
+db.setup:
+	make db.create
+	make db.migrate
+	make db.seed
 	
 db.reset: guard-PGDATABASE
 	dropdb --force ${PGDATABASE}
-	createdb
-	goose up
+	make db.setup
 
 db.seed: guard-DATABASE_URL
 	psql ${DATABASE_URL} -f db/seeds.sql

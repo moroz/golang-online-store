@@ -20,5 +20,8 @@
   },
   "dependencies": {
     "sass": "^1.77.4"
+  },
+  "resolutions": {
+    "rollup": "npm:@rollup/wasm-node"
   }
 }

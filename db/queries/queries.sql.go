@@ -7,7 +7,68 @@ package queries
 
 import (
 	"context"
+
+	"github.com/jackc/pgx/v5/pgtype"
 )
+
+const getCartById = `-- name: GetCartById :one
+select id, inserted_at, updated_at from carts where id = $1
+`
+
+func (q *Queries) GetCartById(ctx context.Context, id int64) (Cart, error) {
+	row := q.db.QueryRow(ctx, getCartById, id)
+	var i Cart
+	err := row.Scan(&i.ID, &i.InsertedAt, &i.UpdatedAt)
+	return i, err
+}
+
+const getCartItemsByCartId = `-- name: GetCartItemsByCartId :many
+select ct.id, ct.cart_id, ct.product_id, ct.quantity, ct.inserted_at, ct.updated_at, p.base_price, p.title, (p.base_price * ct.quantity)::decimal subtotal from cart_items ct
+join products p on ct.product_id = p.id
+where cart_id = $1 order by ct.id
+`
+
+type GetCartItemsByCartIdRow struct {
+	ID         int64
+	CartID     int64
+	ProductID  *int64
+	Quantity   pgtype.Numeric
+	InsertedAt pgtype.Timestamp
+	UpdatedAt  pgtype.Timestamp
+	BasePrice  pgtype.Numeric
+	Title      string
+	Subtotal   pgtype.Numeric
+}
+
+func (q *Queries) GetCartItemsByCartId(ctx context.Context, cartID int64) ([]GetCartItemsByCartIdRow, error) {
+	rows, err := q.db.Query(ctx, getCartItemsByCartId, cartID)
+	if err != nil {
+		return nil, err
+	}
+	defer rows.Close()
+	var items []GetCartItemsByCartIdRow
+	for rows.Next() {
+		var i GetCartItemsByCartIdRow
+		if err := rows.Scan(
+			&i.ID,
+			&i.CartID,
+			&i.ProductID,
+			&i.Quantity,
+			&i.InsertedAt,
+			&i.UpdatedAt,
+			&i.BasePrice,
+			&i.Title,
+			&i.Subtotal,
+		); err != nil {
+			return nil, err
+		}
+		items = append(items, i)
+	}
+	if err := rows.Err(); err != nil {
+		return nil, err
+	}
+	return items, nil
+}
 
 const listProductVariants = `-- name: ListProductVariants :many
 select id, parent_id, title, sku, slug, description, base_price, main_picture, inserted_at, updated_at from products

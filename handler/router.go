@@ -11,6 +11,9 @@ func Router(db queries.DBTX) *gin.Engine {
 	products := ProductController(db)
 	r.GET("/", products.Index)
 
+	cart := CartController(db)
+	r.GET("/cart", cart.Show)
+
 	r.Static("/assets", "./public")
 
 	return r
