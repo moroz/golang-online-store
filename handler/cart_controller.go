@@ -1,6 +1,7 @@
 package handler
 
 import (
+	"github.com/gin-contrib/sessions"
 	"github.com/gin-gonic/gin"
 	"github.com/moroz/sqlc-demo/db/queries"
 	"github.com/moroz/sqlc-demo/templates"
@@ -21,4 +22,12 @@ func (cc *cartController) Show(c *gin.Context) {
 	}
 
 	templates.ShowCart(items).Render(c.Request.Context(), c.Writer)
+}
+
+func (cc *cartController) AddToCart(c *gin.Context) {
+	session := sessions.Default(c)
+	if cartID, ok := session.Get("cart_id").(int64); !ok {
+		// create a cart
+		// save the ID in the session
+	}
 }

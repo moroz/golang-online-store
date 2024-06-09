@@ -13,8 +13,7 @@ templ ProductIndex(title string, products []queries.Product) {
 							<img src={ *product.MainPicture }/>
 						}
 					</div>
-					<p>{ product.Title }</p>
-					<span class="price">{ formatPrice(product.BasePrice) }</span>
+					<span class="title">{ product.Title }</span>
           <form action="/cart/items" method="POST">
             <input type="hidden" value={strconv.Itoa(int(product.ID))} />
             <button type="submit" class="add-to-cart">Add to cart for {formatPrice(product.BasePrice)} </button>

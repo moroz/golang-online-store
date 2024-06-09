@@ -14,6 +14,9 @@ importers:
       sass:
         specifier: ^1.77.4
         version: 1.77.4
+      tailwind-colors-scss:
+        specifier: ^1.0.1
+        version: 1.0.1
     devDependencies:
       '@sveltejs/vite-plugin-svelte':
         specifier: ^3.0.2
@@ -561,6 +564,9 @@ packages:
     resolution: {integrity: sha512-N7m1YnoXtRf5wya5Gyx3TWuTddI4nAyayyIWFojiWV5IayDYNV5i2mRp/7qNGol4DtxEYxljmrbgp1HM6hUbmQ==}
     engines: {node: '>=16'}
 
+  tailwind-colors-scss@1.0.1:
+    resolution: {integrity: sha512-6VZUrLDhCMXU5xN5sjL/Th4DehcomJV9LE9b4H4dg5sYDjwDNBOOVzf+e9vxKRKfQ2tPGTs/NJ95rVhuVuSqxA==}
+
   to-regex-range@5.0.1:
     resolution: {integrity: sha512-65P7iz6X5yEr1cwcgvQxbbIw7Uk3gOy5dIdtZ4rDveLqhrdJP+Li/Hx6tyK0NEb+2GCyneCMJiGqrADCSNk8sQ==}
     engines: {node: '>=8.0'}
@@ -1085,6 +1091,8 @@ snapshots:
       locate-character: 3.0.0
       magic-string: 0.30.10
       periscopic: 3.1.0
+
+  tailwind-colors-scss@1.0.1: {}
 
   to-regex-range@5.0.1:
     dependencies:

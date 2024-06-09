@@ -8,6 +8,19 @@
   width: 100%;
   overflow: hidden;
   text-align: center;
+
+  :is(&) {
+
+    .title,
+    .price {
+      display: block;
+    }
+
+    .title {
+      font-size: 1.125rem;
+      margin: .25em;
+    }
+  }
 }
 
 .product-image {
@@ -19,4 +32,16 @@
     height: 100%;
     width: 100%;
   }
+}
+
+.add-to-cart {
+  border: 0;
+  outline: 0;
+  background: $tw-blue-500;
+  color: white;
+  width: 100%;
+  height: 40px;
+  font-size: inherit;
+  font-weight: bold;
+  border-radius: 3px;
 }
