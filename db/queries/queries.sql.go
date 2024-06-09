@@ -13,6 +13,7 @@ import (
 
 const addItemToCart = `-- name: AddItemToCart :exec
 insert into cart_items (cart_id, product_id, quantity) values ($1, $2, 1)
+on conflict (cart_id, product_id) do update set quantity = cart_items.quantity + 1
 `
 
 type AddItemToCartParams struct {
