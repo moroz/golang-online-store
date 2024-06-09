@@ -1,6 +1,7 @@
 package templates
 
 import "github.com/moroz/sqlc-demo/db/queries"
+import "strconv"
 
 templ ProductIndex(title string, products []queries.Product) {
 	@RootLayout(title) {
@@ -14,6 +15,10 @@ templ ProductIndex(title string, products []queries.Product) {
 					</div>
 					<p>{ product.Title }</p>
 					<span class="price">{ formatPrice(product.BasePrice) }</span>
+          <form action="/cart/items" method="POST">
+            <input type="hidden" value={strconv.Itoa(int(product.ID))} />
+            <button type="submit" class="add-to-cart">Add to cart for {formatPrice(product.BasePrice)} </button>
+          </form>
 				</article>
 			}
 		</section>
