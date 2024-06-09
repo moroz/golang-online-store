@@ -21,8 +21,5 @@
   "dependencies": {
     "sass": "^1.77.4",
     "tailwind-colors-scss": "^1.0.1"
-  },
-  "resolutions": {
-    "rollup": "npm:@rollup/wasm-node"
   }
 }

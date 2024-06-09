@@ -14,10 +14,10 @@ templ ProductIndex(title string, products []queries.Product) {
 						}
 					</div>
 					<span class="title">{ product.Title }</span>
-          <form action="/cart/items" method="POST">
-            <input type="hidden" value={strconv.Itoa(int(product.ID))} />
-            <button type="submit" class="add-to-cart">Add to cart for {formatPrice(product.BasePrice)} </button>
-          </form>
+					<form action="/cart/items" method="POST">
+						<input type="hidden" name="productID" value={ strconv.Itoa(int(product.ID)) }/>
+						<button type="submit" class="add-to-cart">Add to cart for { formatPrice(product.BasePrice) } </button>
+					</form>
 				</article>
 			}
 		</section>

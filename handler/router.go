@@ -16,6 +16,7 @@ func Router(db queries.DBTX, sessionStore sessions.Store) *gin.Engine {
 
 	cart := CartController(db)
 	r.GET("/cart", cart.Show)
+	r.POST("/cart/items", cart.AddToCart)
 
 	r.Static("/assets", "./public")
 

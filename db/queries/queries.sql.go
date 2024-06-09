@@ -11,6 +11,31 @@ import (
 	"github.com/jackc/pgx/v5/pgtype"
 )
 
+const addItemToCart = `-- name: AddItemToCart :exec
+insert into cart_items (cart_id, product_id, quantity) values ($1, $2, 1)
+`
+
+type AddItemToCartParams struct {
+	CartID    int64
+	ProductID *int64
+}
+
+func (q *Queries) AddItemToCart(ctx context.Context, arg AddItemToCartParams) error {
+	_, err := q.db.Exec(ctx, addItemToCart, arg.CartID, arg.ProductID)
+	return err
+}
+
+const createCart = `-- name: CreateCart :one
+insert into carts (id) values (default) returning id
+`
+
+func (q *Queries) CreateCart(ctx context.Context) (int64, error) {
+	row := q.db.QueryRow(ctx, createCart)
+	var id int64
+	err := row.Scan(&id)
+	return id, err
+}
+
 const getCartById = `-- name: GetCartById :one
 select id, inserted_at, updated_at from carts where id = $1
 `

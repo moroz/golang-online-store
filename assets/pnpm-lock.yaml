@@ -4,9 +4,6 @@ settings:
   autoInstallPeers: true
   excludeLinksFromLockfile: false
 
-overrides:
-  rollup: npm:@rollup/wasm-node
-
 importers:
 
   .:
