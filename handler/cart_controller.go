@@ -7,6 +7,7 @@ import (
 
 	"github.com/gin-contrib/sessions"
 	"github.com/gin-gonic/gin"
+	"github.com/moroz/sqlc-demo/config"
 	"github.com/moroz/sqlc-demo/db/queries"
 	"github.com/moroz/sqlc-demo/templates"
 	"github.com/shopspring/decimal"
@@ -25,7 +26,7 @@ func (cc *cartController) Show(c *gin.Context) {
 	var err error
 
 	session := sessions.Default(c)
-	if cartID, ok := session.Get("cart_id").(int64); ok {
+	if cartID, ok := session.Get(config.SessionCartIDKey).(int64); ok {
 		items, err = cc.queries.GetCartItemsByCartId(c.Request.Context(), cartID)
 		if err != nil {
 			c.AbortWithError(500, err)
@@ -64,7 +65,7 @@ func (cc *cartController) AddToCart(c *gin.Context) {
 
 func (cc *cartController) getOrCreateCart(c *gin.Context) (int64, error) {
 	session := sessions.Default(c)
-	if cartID, ok := session.Get("cart_id").(int64); ok {
+	if cartID, ok := session.Get(config.SessionCartIDKey).(int64); ok {
 		_, err := cc.queries.GetCartById(c.Request.Context(), cartID)
 		if err == nil {
 			return cartID, nil
@@ -73,7 +74,7 @@ func (cc *cartController) getOrCreateCart(c *gin.Context) (int64, error) {
 
 	cartID, err := cc.queries.CreateCart(c.Request.Context())
 	if err == nil {
-		session.Set("cart_id", cartID)
+		session.Set(config.SessionCartIDKey, cartID)
 		session.Save()
 	}
 	return cartID, err
