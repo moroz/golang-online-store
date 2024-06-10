@@ -1,5 +1,8 @@
 package templates
 
+import "fmt"
+import "github.com/moroz/sqlc-demo/db/queries"
+
 templ fonts() {
 	<link rel="preconnect" href="https://fonts.googleapis.com"/>
 	<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
@@ -8,6 +11,16 @@ templ fonts() {
 
 templ assets() {
 	<script type="module" src="http://localhost:5173/src/main.ts"></script>
+}
+
+func countItemsInCart(ctx context.Context) string {
+	if cart, ok := ctx.Value("cart").([]queries.GetCartItemsByCartIdRow); ok {
+		return fmt.Sprintf("%d", len(cart))
+	}
+	return "0"
+}
+
+templ cart() {
 }
 
 templ RootLayout(title string) {
@@ -20,12 +33,12 @@ templ RootLayout(title string) {
 			@assets()
 		</head>
 		<body>
-      <header>
-        <h1>Online store</h1>
-        <nav>
-          <a href="/cart">Cart</a>
-        </nav>
-      </header>
+			<header>
+				<h1>Online store</h1>
+				<nav>
+					<a href="/cart">Cart ({ countItemsInCart(ctx) })</a>
+				</nav>
+			</header>
 			{ children... }
 		</body>
 	</html>
