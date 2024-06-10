@@ -9,14 +9,18 @@ templ ShowCart(items []queries.GetCartItemsByCartIdRow) {
 		<ul>
 			for _, item := range items {
 				<li>
-					{ item.Title } { formatPrice(item.BasePrice) } &times; { formatDecimal(item.Quantity) } = { formatPrice(item.Subtotal) }
-					<button type="button">Remove</button>
+					{ item.TitlePl } { formatPrice(item.BasePrice) } &times; { item.Quantity.String() } = { formatPrice(item.Subtotal) }
+					<form action={ templ.SafeURL(fmt.Sprintf("/cart/items/%d", item.ID)) } method="POST">
+						<input type="hidden" name="_method" value="PATCH"/>
+						<input type="hidden" name="quantity" value="0"/>
+						<button type="submit">Remove</button>
+					</form>
 				</li>
 			}
 		</ul>
 		<p>
 			<strong>Grand total:</strong>
-			{ fmt.Sprintf("NT$%d", int(calculateGrandTotal(items))) }
+			{ formatPrice(calculateGrandTotal(items)) }
 		</p>
 		<a href="/">Continue shopping</a>
 	}

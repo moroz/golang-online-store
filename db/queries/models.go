@@ -6,6 +6,7 @@ package queries
 
 import (
 	"github.com/jackc/pgx/v5/pgtype"
+	"github.com/shopspring/decimal"
 )
 
 type Cart struct {
@@ -18,20 +19,22 @@ type CartItem struct {
 	ID         int64
 	CartID     int64
 	ProductID  *int64
-	Quantity   pgtype.Numeric
+	Quantity   decimal.Decimal
 	InsertedAt pgtype.Timestamp
 	UpdatedAt  pgtype.Timestamp
 }
 
 type Product struct {
-	ID          int64
-	ParentID    *int64
-	Title       string
-	Sku         *string
-	Slug        string
-	Description string
-	BasePrice   pgtype.Numeric
-	MainPicture *string
-	InsertedAt  pgtype.Timestamp
-	UpdatedAt   pgtype.Timestamp
+	ID            int64
+	ParentID      *int64
+	TitlePl       string
+	TitleEn       *string
+	Sku           *string
+	Slug          string
+	DescriptionPl *string
+	DescriptionEn *string
+	BasePrice     decimal.Decimal
+	MainPicture   *string
+	InsertedAt    pgtype.Timestamp
+	UpdatedAt     pgtype.Timestamp
 }

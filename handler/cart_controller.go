@@ -9,6 +9,7 @@ import (
 	"github.com/gin-gonic/gin"
 	"github.com/moroz/sqlc-demo/db/queries"
 	"github.com/moroz/sqlc-demo/templates"
+	"github.com/shopspring/decimal"
 )
 
 type cartController struct {
@@ -37,8 +38,7 @@ func (cc *cartController) Show(c *gin.Context) {
 
 func (cc *cartController) AddToCart(c *gin.Context) {
 	c.Request.ParseForm()
-	productIDStr := c.Request.PostForm.Get("productID")
-	productID, err := strconv.ParseInt(productIDStr, 10, 64)
+	productID, err := strconv.ParseInt(c.PostForm("productID"), 10, 64)
 	if err != nil {
 		c.AbortWithError(422, err)
 		return
@@ -72,9 +72,45 @@ func (cc *cartController) getOrCreateCart(c *gin.Context) (int64, error) {
 	}
 
 	cartID, err := cc.queries.CreateCart(c.Request.Context())
-	if err != nil {
+	if err == nil {
 		session.Set("cart_id", cartID)
 		session.Save()
 	}
 	return cartID, err
+}
+
+func (cc *cartController) UpdateQuantity(c *gin.Context) {
+	cartID, err := cc.getOrCreateCart(c)
+	if err != nil {
+		c.AbortWithError(500, err)
+		return
+	}
+
+	c.Request.ParseForm()
+	quantity, err := decimal.NewFromString(c.PostForm("quantity"))
+	if err != nil {
+		c.AbortWithError(400, err)
+		return
+	}
+
+	cartItemID, err := strconv.ParseInt(c.Param("id"), 10, 64)
+	if err != nil {
+		c.AbortWithError(400, err)
+		return
+	}
+
+	if quantity.LessThanOrEqual(decimal.NewFromInt(0)) {
+		err = cc.queries.DeleteItemFromCart(c.Request.Context(), queries.DeleteItemFromCartParams{
+			CartID: cartID,
+			ID:     cartItemID,
+		})
+	} else {
+		err = cc.queries.UpdateItemInCart(c.Request.Context(), queries.UpdateItemInCartParams{
+			Quantity: quantity,
+			CartID:   cartID,
+			ID:       cartItemID,
+		})
+	}
+
+	c.Redirect(http.StatusFound, "/cart")
 }

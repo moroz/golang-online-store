@@ -9,6 +9,7 @@ import (
 	"context"
 
 	"github.com/jackc/pgx/v5/pgtype"
+	"github.com/shopspring/decimal"
 )
 
 const addItemToCart = `-- name: AddItemToCart :exec
@@ -37,6 +38,20 @@ func (q *Queries) CreateCart(ctx context.Context) (int64, error) {
 	return id, err
 }
 
+const deleteItemFromCart = `-- name: DeleteItemFromCart :exec
+delete from cart_items where cart_id = $1 and id = $2
+`
+
+type DeleteItemFromCartParams struct {
+	CartID int64
+	ID     int64
+}
+
+func (q *Queries) DeleteItemFromCart(ctx context.Context, arg DeleteItemFromCartParams) error {
+	_, err := q.db.Exec(ctx, deleteItemFromCart, arg.CartID, arg.ID)
+	return err
+}
+
 const getCartById = `-- name: GetCartById :one
 select id, inserted_at, updated_at from carts where id = $1
 `
@@ -49,7 +64,7 @@ func (q *Queries) GetCartById(ctx context.Context, id int64) (Cart, error) {
 }
 
 const getCartItemsByCartId = `-- name: GetCartItemsByCartId :many
-select ct.id, ct.cart_id, ct.product_id, ct.quantity, ct.inserted_at, ct.updated_at, p.base_price, p.title, (p.base_price * ct.quantity)::decimal subtotal from cart_items ct
+select ct.id, ct.cart_id, ct.product_id, ct.quantity, ct.inserted_at, ct.updated_at, p.base_price, p.title_pl, (p.base_price * ct.quantity)::numeric subtotal from cart_items ct
 join products p on ct.product_id = p.id
 where cart_id = $1 order by ct.id
 `
@@ -58,12 +73,12 @@ type GetCartItemsByCartIdRow struct {
 	ID         int64
 	CartID     int64
 	ProductID  *int64
-	Quantity   pgtype.Numeric
+	Quantity   decimal.Decimal
 	InsertedAt pgtype.Timestamp
 	UpdatedAt  pgtype.Timestamp
-	BasePrice  pgtype.Numeric
-	Title      string
-	Subtotal   pgtype.Numeric
+	BasePrice  decimal.Decimal
+	TitlePl    string
+	Subtotal   decimal.Decimal
 }
 
 func (q *Queries) GetCartItemsByCartId(ctx context.Context, cartID int64) ([]GetCartItemsByCartIdRow, error) {
@@ -83,7 +98,7 @@ func (q *Queries) GetCartItemsByCartId(ctx context.Context, cartID int64) ([]Get
 			&i.InsertedAt,
 			&i.UpdatedAt,
 			&i.BasePrice,
-			&i.Title,
+			&i.TitlePl,
 			&i.Subtotal,
 		); err != nil {
 			return nil, err
@@ -97,7 +112,7 @@ func (q *Queries) GetCartItemsByCartId(ctx context.Context, cartID int64) ([]Get
 }
 
 const listProductVariants = `-- name: ListProductVariants :many
-select id, parent_id, title, sku, slug, description, base_price, main_picture, inserted_at, updated_at from products
+select id, parent_id, title_pl, title_en, sku, slug, description_pl, description_en, base_price, main_picture, inserted_at, updated_at from products
 where parent_id is not null
 order by parent_id, id
 `
@@ -114,10 +129,12 @@ func (q *Queries) ListProductVariants(ctx context.Context) ([]Product, error) {
 		if err := rows.Scan(
 			&i.ID,
 			&i.ParentID,
-			&i.Title,
+			&i.TitlePl,
+			&i.TitleEn,
 			&i.Sku,
 			&i.Slug,
-			&i.Description,
+			&i.DescriptionPl,
+			&i.DescriptionEn,
 			&i.BasePrice,
 			&i.MainPicture,
 			&i.InsertedAt,
@@ -134,7 +151,7 @@ func (q *Queries) ListProductVariants(ctx context.Context) ([]Product, error) {
 }
 
 const listProducts = `-- name: ListProducts :many
-select id, parent_id, title, sku, slug, description, base_price, main_picture, inserted_at, updated_at from products order by inserted_at DESC
+select id, parent_id, title_pl, title_en, sku, slug, description_pl, description_en, base_price, main_picture, inserted_at, updated_at from products order by inserted_at DESC
 `
 
 func (q *Queries) ListProducts(ctx context.Context) ([]Product, error) {
@@ -149,10 +166,12 @@ func (q *Queries) ListProducts(ctx context.Context) ([]Product, error) {
 		if err := rows.Scan(
 			&i.ID,
 			&i.ParentID,
-			&i.Title,
+			&i.TitlePl,
+			&i.TitleEn,
 			&i.Sku,
 			&i.Slug,
-			&i.Description,
+			&i.DescriptionPl,
+			&i.DescriptionEn,
 			&i.BasePrice,
 			&i.MainPicture,
 			&i.InsertedAt,
@@ -166,4 +185,19 @@ func (q *Queries) ListProducts(ctx context.Context) ([]Product, error) {
 		return nil, err
 	}
 	return items, nil
+}
+
+const updateItemInCart = `-- name: UpdateItemInCart :exec
+update cart_items set quantity = $1 where cart_id = $2 and id = $3
+`
+
+type UpdateItemInCartParams struct {
+	Quantity decimal.Decimal
+	CartID   int64
+	ID       int64
+}
+
+func (q *Queries) UpdateItemInCart(ctx context.Context, arg UpdateItemInCartParams) error {
+	_, err := q.db.Exec(ctx, updateItemInCart, arg.Quantity, arg.CartID, arg.ID)
+	return err
 }
